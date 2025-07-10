@@ -36,31 +36,19 @@ typedef struct {
 
 IRAM_ATTR static void timer01_isr (void *arg)
 {
-#if CONFIG_IDF_TARGET_ESP32S3
     TIMERG0.int_clr_timers.t1_int_clr = 1;
-#else
-    TIMERG0.int_clr_timers.t1 = 1;
-#endif
     ((dtimer_t *)arg)->cfg.timeout_callback(((dtimer_t *)arg)->cfg.context);
 }
 
 IRAM_ATTR static void timer10_isr (void *arg)
 {
-#if CONFIG_IDF_TARGET_ESP32S3
     TIMERG1.int_clr_timers.t0_int_clr = 1;
-#else
-    TIMERG1.int_clr_timers.t0 = 1;
-#endif
     ((dtimer_t *)arg)->cfg.timeout_callback(((dtimer_t *)arg)->cfg.context);
 }
 
 IRAM_ATTR static void timer11_isr (void *arg)
 {
-#if CONFIG_IDF_TARGET_ESP32S3
     TIMERG1.int_clr_timers.t1_int_clr = 1;
-#else
-    TIMERG1.int_clr_timers.t1 = 1;
-#endif
     ((dtimer_t *)arg)->cfg.timeout_callback(((dtimer_t *)arg)->cfg.context);
 }
 
@@ -125,7 +113,7 @@ bool timerStart (hal_timer_t timer, uint32_t period)
 #if CONFIG_IDF_TARGET_ESP32S3
     TIMERG0.hw_timer[dtimer->index].config.tn_alarm_en = TIMER_ALARM_EN;
 #else
-    TIMERG0.hw_timer[dtimer->index].config.alarm_en = TIMER_ALARM_EN;
+    TIMERG0.hw_timer[dtimer->index].config.tx_alarm_en = TIMER_ALARM_EN;
 #endif
 
     return true;

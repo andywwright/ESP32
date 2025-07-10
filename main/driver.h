@@ -54,6 +54,8 @@
 #include "driver/ledc.h"
 #include "driver/rmt.h"
 #include "driver/adc.h"
+#include "soc/timer_group_struct.h"
+#include "esp_timer.h"
 #include "driver/i2c.h"
 #include "hal/gpio_ll.h"
 #include "esp_log.h"

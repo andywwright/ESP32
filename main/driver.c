@@ -43,6 +43,8 @@
 #include "soc/rtc.h"
 #include "driver/gpio.h"
 #include "driver/timer.h"
+#include "soc/timer_group_struct.h"
+#include "esp_timer.h"
 #include "driver/ledc.h"
 #include "driver/rmt.h"
 #include "hal/rmt_ll.h"
@@ -625,14 +627,14 @@ static void stepperWakeUp (void)
     TIMERG0.hw_timer[STEP_TIMER_INDEX].alarmhi.val = 0;
     TIMERG0.hw_timer[STEP_TIMER_INDEX].alarmlo.val = hal.f_step_timer / 500; // ~2ms delay to allow drivers time to wake up.
 #else
-    TIMERG0.hw_timer[STEP_TIMER_INDEX].alarm_high = 0;
-    TIMERG0.hw_timer[STEP_TIMER_INDEX].alarm_low = hal.f_step_timer / 500; // ~2ms delay to allow drivers time to wake up.
+    TIMERG0.hw_timer[STEP_TIMER_INDEX].alarmhi.val = 0;
+    TIMERG0.hw_timer[STEP_TIMER_INDEX].alarmlo.val = hal.f_step_timer / 500; // ~2ms delay to allow drivers time to wake up.
 #endif
     timer_start(STEP_TIMER_GROUP, STEP_TIMER_INDEX);
 #if CONFIG_IDF_TARGET_ESP32S3
     TIMERG0.hw_timer[STEP_TIMER_INDEX].config.tn_alarm_en = TIMER_ALARM_EN;
 #else
-    TIMERG0.hw_timer[STEP_TIMER_INDEX].config.alarm_en = TIMER_ALARM_EN;
+    TIMERG0.hw_timer[STEP_TIMER_INDEX].config.tx_alarm_en = TIMER_ALARM_EN;
 #endif
 }
 
@@ -648,9 +650,9 @@ IRAM_ATTR static void stepperCyclesPerTick (uint32_t cycles_per_tick)
   #endif
 #else
   #ifdef ADAPTIVE_MULTI_AXIS_STEP_SMOOTHING
-    TIMERG0.hw_timer[STEP_TIMER_INDEX].alarm_low = cycles_per_tick < (1UL << 18) ? max(cycles_per_tick, t_min_period) : (1UL << 18) - 1UL;
+    TIMERG0.hw_timer[STEP_TIMER_INDEX].alarmlo.val = cycles_per_tick < (1UL << 18) ? max(cycles_per_tick, t_min_period) : (1UL << 18) - 1UL;
   #else
-    TIMERG0.hw_timer[STEP_TIMER_INDEX].alarm_low = cycles_per_tick < (1UL << 23) ? max(cycles_per_tick, t_min_period) : (1UL << 23) - 1UL;
+    TIMERG0.hw_timer[STEP_TIMER_INDEX].alarmlo.val = cycles_per_tick < (1UL << 23) ? max(cycles_per_tick, t_min_period) : (1UL << 23) - 1UL;
   #endif
 #endif
 }
@@ -1496,7 +1498,7 @@ IRAM_ATTR static void stepperGoIdle (bool clear_signals)
 #if CONFIG_IDF_TARGET_ESP32S3
     TIMERG0.hw_timer[STEP_TIMER_INDEX].config.tn_en = 0;
 #else
-    TIMERG0.hw_timer[STEP_TIMER_INDEX].config.enable = 0;
+    TIMERG0.hw_timer[STEP_TIMER_INDEX].config.tx_en = 0;
 #endif
     if(clear_signals) {
 #if USE_I2S_OUT
@@ -1515,7 +1517,7 @@ static void i2s_set_streaming_mode (bool stream)
 #if CONFIG_IDF_TARGET_ESP32S3
     TIMERG0.hw_timer[STEP_TIMER_INDEX].config.tn_en = 0;
 #else
-    TIMERG0.hw_timer[STEP_TIMER_INDEX].config.enable = 0;
+    TIMERG0.hw_timer[STEP_TIMER_INDEX].config.tx_en = 0;
 #endif
 
     if(!stream && hal.stepper.wake_up == I2SStepperWakeUp && i2s_out_get_pulser_status() == STEPPING) {
@@ -3863,8 +3865,8 @@ IRAM_ATTR static void stepper_driver_isr (void *arg)
     TIMERG0.int_clr_timers.t0_int_clr = 1;
     TIMERG0.hw_timer[STEP_TIMER_INDEX].config.tn_alarm_en = TIMER_ALARM_EN;
 #else
-    TIMERG0.int_clr_timers.t0 = 1;
-    TIMERG0.hw_timer[STEP_TIMER_INDEX].config.alarm_en = TIMER_ALARM_EN;
+    TIMERG0.int_clr_timers.t0_int_clr = 1;
+    TIMERG0.hw_timer[STEP_TIMER_INDEX].config.tx_alarm_en = TIMER_ALARM_EN;
 #endif
     hal.stepper.interrupt_callback();
 }

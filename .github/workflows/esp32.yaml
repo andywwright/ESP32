@@ -9,8 +9,8 @@ jobs:
     - uses: actions/checkout@v1
       with:
         submodules: recursive
-    - name: Build grblHAL
-      uses: docker://espressif/idf:release-v4.3
+      - name: Build grblHAL
+        uses: docker://espressif/idf:release-v5.4
       with:
         entrypoint: /opt/esp/entrypoint.sh
         args: bash -c "idf.py build"

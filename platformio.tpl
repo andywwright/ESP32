@@ -10,8 +10,9 @@ include_dir = main
 build_flags =
 
 [env:%env_name%]
-platform = espressif32 @ ~5.3.0
+platform = espressif32 @ 6.11.0
 framework = espidf
+platform_packages = platformio/framework-espidf@~3.50402.0
 board = %board%
 %board_opts%
 board_build.embed_files =
@@ -23,5 +24,8 @@ build_flags =
   -Wno-missing-field-initializers
   -Wno-maybe-uninitialized
   -Wno-stringop-truncation
+  -DUINT32FMT=\"%%lu\"
+  -DUINT32SFMT=\"lu\"
+  -include platform_override.h
 %build_flags%
 lib_compat_mode = off
