@@ -24,6 +24,8 @@
 #include "esp_log.h"
 
 #include "nvs.h"
+#include "esp_partition.h"
+#include "spi_flash_mmap.h"
 #include "grbl/hal.h"
 
 #if !NVSDATA_BUFFER_ENABLE

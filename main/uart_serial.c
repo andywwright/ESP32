@@ -38,6 +38,7 @@
 #include "soc/io_mux_reg.h"
 #include "soc/gpio_sig_map.h"
 #include "soc/dport_reg.h"
+#include "soc/soc.h"
 #include "driver/uart.h"
 #include "hal/uart_ll.h"
 #include "esp_intr_alloc.h"
@@ -280,7 +281,7 @@ static void uartSetBaudRate (uart_t *uart, uint32_t baud_rate)
         return;
 
     UART_MUTEX_LOCK(uart);
-    uart_ll_set_baudrate(uart->dev, baud_rate);
+    uart_ll_set_baudrate(uart->dev, baud_rate, APB_CLK_FREQ);
     UART_MUTEX_UNLOCK(uart);
 }
 

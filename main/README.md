@@ -4,20 +4,20 @@ __Important:__
 If enabling ftp upload to the SD card then _ffconf.h_ in the ESP SDK has to be edited, `#define FF_FS_RPATH` must be changed to 2 or you will get a compiler error.  
 _ffconf.h_ is located in the subfolder _esp-idf\components\fatfs\src_ in the ESP32 SDK installation. The ESP32 SDK is typically installed in the user folder.
 
-### How to build using ESP-IDF v4.3:
+### How to build using ESP-IDF v5.4:
 
 While this manual briefly describes basic build process on Linux OS, you can find more details
 as well as differences for building on other OS at this webpage:
 
 https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/index.html#step-2-get-esp-idf
 
-First you have to prepare esp-idf v4.3:
+First you have to prepare esp-idf v5.4:
 
 ```bash
 #Create directory and clone esp-idf into it:
 mkdir -p ~/esp
 cd ~/esp
-git clone -b release/v4.3 --recursive --shallow-submodules https://github.com/espressif/esp-idf.git
+git clone -b release/v5.4 --recursive --shallow-submodules https://github.com/espressif/esp-idf.git
 
 #Prepare build environment and toolchain:
 cd ~/esp/esp-idf
@@ -52,8 +52,8 @@ Once flashing is complete, your CNC controller is ready to be configured and use
 If you're familiar with [Docker](https://docker.io), you can use it to build grblHAL in a self-contained environment without installing the complete toolchain on your system:
 
 - prepare and configure the codebase as described above
-- build with `docker run -it --rm -v $(pwd):/grbl -w /grbl/drivers/ESP32 espressif/idf:release-v4.3 idf.py build`
-- flash with `docker run -it --rm -v $(pwd):/grbl --privileged -v /dev:/dev -w /grbl/drivers/ESP32 espressif/idf:release-v4.3 idf.py -p /dev/ttyUSB0 flash`
+- build with `docker run -it --rm -v $(pwd):/grbl -w /grbl/drivers/ESP32 espressif/idf:release-v5.4 idf.py build`
+- flash with `docker run -it --rm -v $(pwd):/grbl --privileged -v /dev:/dev -w /grbl/drivers/ESP32 espressif/idf:release-v5.4 idf.py -p /dev/ttyUSB0 flash`
 
 ### Changelog/Notes:
 
